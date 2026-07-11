@@ -1,23 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@android:color/white">
 
-    <!-- 배경: 성군기 위반은 Zero, 전우를 지키는 당신은 Hero! -->
+    <!-- 배경 이미지: 잘리지 않고 전체가 보이도록 fitCenter -->
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:src="@drawable/start_bg"
-        android:scaleType="centerCrop"
-        android:contentDescription="시작화면 배경" />
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:contentDescription="성군기 위반은 Zero, 전우를 지키는 당신은 Hero" />
 
     <!-- 하단 부대 선택 패널 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
         android:orientation="vertical"
-        android:background="#E6FFFFFF"
+        android:background="#F5F6FA"
         android:padding="20dp">
 
         <TextView
@@ -92,4 +95,4 @@
         </LinearLayout>
 
     </LinearLayout>
-</FrameLayout>
+</LinearLayout>
