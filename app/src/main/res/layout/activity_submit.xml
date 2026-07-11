@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="@android:color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <!-- 긴급연결 바 (항상 상단 고정) -->
+        <Button
+            android:id="@+id/btnEmergencySubmit"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="🆘 긴급 도움 연결 (국방헬프콜 1303)"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:backgroundTint="#D32F2F"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:id="@+id/tvHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="#1A237E"
+            android:paddingBottom="8dp" />
+
+        <TextView
+            android:id="@+id/tvGuide"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="#555555"
+            android:paddingBottom="20dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="제목"
+            android:textStyle="bold"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/etTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="제목을 입력하세요"
+            android:inputType="text"
+            android:maxLines="1"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="내용"
+            android:textStyle="bold"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/etContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="내용을 입력하세요"
+            android:inputType="textMultiLine"
+            android:gravity="top"
+            android:minLines="8"
+            android:layout_marginBottom="16dp" />
+
+        <!-- 증거 첨부 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="증거 첨부"
+            android:textStyle="bold"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="사진·캡처·음성·문서 파일을 첨부할 수 있습니다."
+            android:textSize="13sp"
+            android:textColor="#888888"
+            android:paddingBottom="8dp" />
+
+        <Button
+            android:id="@+id/btnAttach"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="📎 파일 첨부하기"
+            android:textSize="15sp"
+            android:textColor="#1A237E"
+            android:backgroundTint="#E8EAF6" />
+
+        <!-- 첨부된 파일 목록 (동적 생성) -->
+        <LinearLayout
+            android:id="@+id/llAttachments"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:paddingTop="8dp"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/btnSubmit"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="관리자에게 제출"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:backgroundTint="#1A237E"
+            android:layout_marginTop="16dp" />
+
+    </LinearLayout>
+</ScrollView>

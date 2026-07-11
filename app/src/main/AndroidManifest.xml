@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application
+        android:name=".App"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Jeonwoojo">
+
+        <activity
+            android:name=".StartActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".InfoActivity"
+            android:label="성군기 위반이란?"
+            android:theme="@style/Theme.Jeonwoojo.WithActionBar"
+            android:parentActivityName=".MainActivity" />
+
+        <activity
+            android:name=".SubmitActivity"
+            android:theme="@style/Theme.Jeonwoojo.WithActionBar"
+            android:parentActivityName=".MainActivity"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".SettingsActivity"
+            android:label="설정"
+            android:theme="@style/Theme.Jeonwoojo.WithActionBar"
+            android:parentActivityName=".MainActivity" />
+
+        <activity
+            android:name=".AdminLoginActivity"
+            android:label="관리자 로그인"
+            android:theme="@style/Theme.Jeonwoojo.WithActionBar"
+            android:parentActivityName=".MainActivity" />
+
+        <activity
+            android:name=".AdminListActivity"
+            android:label="접수 내역 (관리자)"
+            android:theme="@style/Theme.Jeonwoojo.WithActionBar"
+            android:parentActivityName=".MainActivity" />
+    </application>
+
+</manifest>

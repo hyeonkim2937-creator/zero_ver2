@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:fillViewport="true">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="🎵 배경음악 (BGM)"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="#1A237E"
+        android:paddingBottom="4dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="소리 크기를 조절하세요. 0%로 하면 음소거됩니다."
+        android:textSize="14sp"
+        android:textColor="#777777"
+        android:paddingBottom="24dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🔈"
+            android:textSize="20sp" />
+
+        <SeekBar
+            android:id="@+id/seekVolume"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:max="100"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🔊"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvVolumeValue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:textColor="#1A237E"
+        android:paddingTop="16dp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DDDDDD"
+        android:layout_marginTop="28dp"
+        android:layout_marginBottom="24dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="🔇 개인정보 배려"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="#1A237E"
+        android:paddingBottom="4dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="신고·상담 화면 자동 음소거"
+                android:textSize="16sp"
+                android:textColor="#212121" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="신고나 상담을 작성하는 동안 배경음악을 자동으로 끕니다. 주변에 앱 사용이 드러나지 않도록 돕습니다. 화면을 나가면 원래 볼륨으로 돌아옵니다."
+                android:textSize="13sp"
+                android:textColor="#888888"
+                android:paddingTop="2dp" />
+        </LinearLayout>
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switchMuteOnSubmit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DDDDDD"
+        android:layout_marginTop="28dp"
+        android:layout_marginBottom="24dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="📮 민원"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="#1A237E"
+        android:paddingBottom="12dp" />
+
+    <Button
+        android:id="@+id/btnCheckStatus"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:text="민원 처리상태 확인 (접수번호 조회)"
+        android:textSize="15sp"
+        android:textColor="#1A237E"
+        android:backgroundTint="#E8EAF6"
+        android:layout_marginBottom="10dp" />
+
+    <Button
+        android:id="@+id/btnSuggestion"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:text="관리자에게 건의사항 보내기"
+        android:textSize="15sp"
+        android:textColor="#1A237E"
+        android:backgroundTint="#E8EAF6" />
+
+</LinearLayout>
+</ScrollView>

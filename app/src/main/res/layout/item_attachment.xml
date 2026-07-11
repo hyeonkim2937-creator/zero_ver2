@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:background="#F5F5F5"
+    android:padding="10dp"
+    android:layout_marginTop="6dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="📄 "
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/tvFileName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textSize="14sp"
+        android:textColor="#333333"
+        android:maxLines="1"
+        android:ellipsize="middle" />
+
+    <ImageView
+        android:id="@+id/btnRemove"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:src="@android:drawable/ic_menu_close_clear_cancel"
+        android:contentDescription="첨부 삭제"
+        android:padding="2dp" />
+
+</LinearLayout>
