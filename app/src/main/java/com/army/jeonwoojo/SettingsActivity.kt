@@ -48,6 +48,15 @@ class SettingsActivity : AppCompatActivity() {
                 putExtra(SubmitActivity.EXTRA_MODE, SubmitActivity.MODE_SUGGESTION)
             })
         }
+
+        // 설정 저장 (볼륨·음소거 설정은 변경 즉시 자동 저장되지만,
+        // 저장 완료를 확실히 확인시켜 주기 위한 버튼)
+        findViewById<android.widget.Button>(R.id.btnSaveSettings).setOnClickListener {
+            BgmPlayer.setVolume(this, seekBar.progress)
+            BgmPlayer.setMuteOnSubmit(this, switchMute.isChecked)
+            android.widget.Toast.makeText(this, "✓ 설정이 저장되었습니다.", android.widget.Toast.LENGTH_SHORT).show()
+            finish()
+        }
     }
 
     /** 접수번호를 입력받아 민원 처리상태를 보여준다 */

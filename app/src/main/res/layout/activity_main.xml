@@ -7,7 +7,7 @@
     android:background="@android:color/white"
     android:padding="16dp">
 
-    <!-- 상단 타이틀 영역: 여단마크 + 온라인 전우조 + 군단마크 -->
+    <!-- 상단 타이틀 영역: 여단마크 + 안심e군 로고 + 군단마크 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -22,16 +22,13 @@
             android:src="@drawable/logo_brigade"
             android:contentDescription="7공병여단 마크" />
 
-        <TextView
+        <ImageView
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="56dp"
             android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/app_title"
-            android:textColor="#1A237E"
-            android:textSize="28sp"
-            android:textStyle="bold"
-            android:letterSpacing="0.1" />
+            android:src="@drawable/logo_appname"
+            android:scaleType="fitCenter"
+            android:contentDescription="안심e군" />
 
         <ImageView
             android:layout_width="52dp"

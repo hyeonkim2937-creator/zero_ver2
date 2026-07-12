@@ -5,6 +5,16 @@
     android:orientation="vertical"
     android:background="@android:color/white">
 
+    <!-- 상단: 안심e군 로고 -->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"
+        android:src="@drawable/logo_appname"
+        android:scaleType="fitCenter"
+        android:contentDescription="안심e군" />
+
     <!-- 배경 이미지: 잘리지 않고 전체가 보이도록 fitCenter -->
     <ImageView
         android:layout_width="match_parent"
