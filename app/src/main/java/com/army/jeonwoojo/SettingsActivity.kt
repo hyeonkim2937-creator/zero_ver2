@@ -48,15 +48,6 @@ class SettingsActivity : AppCompatActivity() {
                 putExtra(SubmitActivity.EXTRA_MODE, SubmitActivity.MODE_SUGGESTION)
             })
         }
-
-        // 설정 저장 (볼륨·음소거 설정은 변경 즉시 자동 저장되지만,
-        // 저장 완료를 확실히 확인시켜 주기 위한 버튼)
-        findViewById<android.widget.Button>(R.id.btnSaveSettings).setOnClickListener {
-            BgmPlayer.setVolume(this, seekBar.progress)
-            BgmPlayer.setMuteOnSubmit(this, switchMute.isChecked)
-            android.widget.Toast.makeText(this, "✓ 설정이 저장되었습니다.", android.widget.Toast.LENGTH_SHORT).show()
-            finish()
-        }
     }
 
     /** 접수번호를 입력받아 민원 처리상태를 보여준다 */
@@ -72,17 +63,26 @@ class SettingsActivity : AppCompatActivity() {
             .setView(input)
             .setPositiveButton("조회") { _, _ ->
                 val code = input.text.toString().trim()
-                val found = SubmissionStore.findByReceipt(this, code)
-                val message = when {
-                    code.length != 6 -> "접수번호는 6자리 숫자입니다."
-                    found == null -> "해당 접수번호의 민원이 처리 완료되었거나, 번호가 올바르지 않습니다."
-                    else -> "[${found.typeLabel}] ${found.title}\n접수일시: ${found.dateLabel}\n\n상태: ${found.statusLabel}"
+                if (code.length != 6) {
+                    android.widget.Toast.makeText(this, "접수번호는 6자리 숫자입니다.", android.widget.Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
                 }
-                androidx.appcompat.app.AlertDialog.Builder(this)
-                    .setTitle("조회 결과")
-                    .setMessage(message)
-                    .setPositiveButton("확인", null)
-                    .show()
+                val progress = androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setMessage("조회 중...").setCancelable(false).create()
+                progress.show()
+                RemoteStore.findByReceipt(code) { found, error ->
+                    progress.dismiss()
+                    val message = when {
+                        error != null -> error
+                        found == null -> "해당 접수번호의 민원이 처리 완료되었거나, 번호가 올바르지 않습니다."
+                        else -> "[${found.typeLabel}] ${found.title}\n접수일시: ${found.dateLabel}\n\n상태: ${found.statusLabel}"
+                    }
+                    androidx.appcompat.app.AlertDialog.Builder(this)
+                        .setTitle("조회 결과")
+                        .setMessage(message)
+                        .setPositiveButton("확인", null)
+                        .show()
+                }
             }
             .setNegativeButton("취소", null)
             .show()

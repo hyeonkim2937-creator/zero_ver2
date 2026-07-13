@@ -94,21 +94,40 @@ class SubmitActivity : AppCompatActivity() {
         refreshAttachments()
     }
 
-    /** 앱 내부 저장소에 저장 → 관리자 로그인으로만 열람 가능 */
+    /** 서버(Firebase)로 전송 → 다른 기기의 관리자도 열람 가능 */
     private fun submit(titleText: String, contentText: String) {
         val unit = Units.selectedUnit(this)
-        val submission = SubmissionStore.add(this, unit, mode, titleText, contentText, attachments)
-        AlertDialog.Builder(this)
-            .setTitle("제출 완료")
-            .setMessage(
-                "정상적으로 접수되었습니다.\n$unit 관리자가 확인 후 처리할 예정입니다.\n\n" +
-                "📌 접수번호: ${submission.receiptCode}\n\n" +
-                "이 번호를 꼭 기억해 두세요!\n" +
-                "설정 > 민원 처리상태 확인 에서 이 번호로\n관리자 확인 여부를 조회할 수 있습니다."
-            )
-            .setPositiveButton("확인") { _, _ -> finish() }
+        val progress = AlertDialog.Builder(this)
+            .setMessage("제출 중입니다...")
             .setCancelable(false)
-            .show()
+            .create()
+        progress.show()
+
+        RemoteStore.add(this, unit, mode, titleText, contentText, attachments) { submission, skipped, error ->
+            progress.dismiss()
+            if (error != null || submission == null) {
+                AlertDialog.Builder(this)
+                    .setTitle("제출 실패")
+                    .setMessage(error ?: "알 수 없는 오류")
+                    .setPositiveButton("확인", null)
+                    .show()
+                return@add
+            }
+            val skippedMsg = if (skipped.isNotEmpty())
+                "\n\n⚠ 용량 초과로 첨부되지 못한 파일:\n" + skipped.joinToString("\n") { "- $it" }
+            else ""
+            AlertDialog.Builder(this)
+                .setTitle("제출 완료")
+                .setMessage(
+                    "정상적으로 접수되었습니다.\n$unit 관리자가 확인 후 처리할 예정입니다.\n\n" +
+                    "📌 접수번호: ${submission.receiptCode}\n\n" +
+                    "이 번호를 꼭 기억해 두세요!\n" +
+                    "설정 > 민원 처리상태 확인 에서 이 번호로\n관리자 확인 여부를 조회할 수 있습니다." + skippedMsg
+                )
+                .setPositiveButton("확인") { _, _ -> finish() }
+                .setCancelable(false)
+                .show()
+        }
     }
 
     /** 첨부 목록 UI 다시 그리기 */

@@ -152,16 +152,5 @@
         android:textColor="#1A237E"
         android:backgroundTint="#E8EAF6" />
 
-    <Button
-        android:id="@+id/btnSaveSettings"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginTop="28dp"
-        android:text="설정 저장"
-        android:textSize="17sp"
-        android:textStyle="bold"
-        android:textColor="@android:color/white"
-        android:backgroundTint="#1A237E" />
-
 </LinearLayout>
 </ScrollView>
