@@ -28,5 +28,5 @@ jobs:
       - name: APK 업로드 (Actions 결과에서 다운로드 가능)
         uses: actions/upload-artifact@v4
         with:
-          name: online-jeonwoojo-debug-apk
+          name: ansim-e-gun-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk

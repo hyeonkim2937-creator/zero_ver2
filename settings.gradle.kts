@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "OnlineJeonwoojo"
+rootProject.name = "AnsimEGun"
 include(":app")

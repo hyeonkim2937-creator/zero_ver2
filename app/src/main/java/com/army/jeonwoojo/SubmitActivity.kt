@@ -1,5 +1,6 @@
 package com.army.jeonwoojo
 
+import android.media.MediaRecorder
 import android.net.Uri
 import android.os.Bundle
 import android.provider.OpenableColumns
@@ -43,6 +44,17 @@ class SubmitActivity : AppCompatActivity() {
             refreshAttachments()
         }
 
+    // ===== 음성 녹음 =====
+    private var recorder: MediaRecorder? = null
+    private var recordFile: java.io.File? = null
+    private lateinit var btnRecord: Button
+
+    private val requestMicPermission =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            if (granted) startRecording()
+            else Toast.makeText(this, "녹음을 하려면 마이크 권한이 필요합니다.", Toast.LENGTH_LONG).show()
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_submit)
@@ -73,6 +85,16 @@ class SubmitActivity : AppCompatActivity() {
             pickFiles.launch("*/*")
         }
 
+        // 음성 녹음 버튼 (누르면 녹음 시작 ↔ 다시 누르면 중지 후 첨부)
+        btnRecord = findViewById(R.id.btnRecord)
+        btnRecord.setOnClickListener {
+            if (recorder != null) {
+                stopRecording()
+            } else {
+                requestMicPermission.launch(android.Manifest.permission.RECORD_AUDIO)
+            }
+        }
+
         // 긴급연결 버튼 (작성 중에도 바로 도움 받기)
         findViewById<Button>(R.id.btnEmergencySubmit).setOnClickListener {
             Emergency.showDialog(this)
@@ -92,45 +114,105 @@ class SubmitActivity : AppCompatActivity() {
         }
 
         refreshAttachments()
+        restoreDraft()
     }
 
-    /** 서버(Firebase)로 전송 → 다른 기기의 관리자도 열람 가능 */
+    /** 서버(Firebase)로 전송 → 다른 기기의 관리자도 열람 가능.
+     *  전송 실패 시 전송 대기함에 자동 저장되어 네트워크 연결 시 자동 재전송된다. */
     private fun submit(titleText: String, contentText: String) {
         val unit = Units.selectedUnit(this)
+        val receiptCode = RemoteStore.generateReceiptCode()
         val progress = AlertDialog.Builder(this)
             .setMessage("제출 중입니다...")
             .setCancelable(false)
             .create()
         progress.show()
 
-        RemoteStore.add(this, unit, mode, titleText, contentText, attachments) { submission, skipped, error ->
+        RemoteStore.add(this, unit, mode, titleText, contentText, attachments, receiptCode) { submission, skipped, error ->
             progress.dismiss()
-            if (error != null || submission == null) {
+            if (error == null && submission != null) {
+                clearDraft()
+                val skippedMsg = if (skipped.isNotEmpty())
+                    "\n\n⚠ 용량 초과로 첨부되지 못한 파일:\n" + skipped.joinToString("\n") { "- $it" }
+                else ""
                 AlertDialog.Builder(this)
-                    .setTitle("제출 실패")
-                    .setMessage(error ?: "알 수 없는 오류")
-                    .setPositiveButton("확인", null)
+                    .setTitle("제출 완료")
+                    .setMessage(
+                        "정상적으로 접수되었습니다.\n$unit 관리자가 확인 후 처리할 예정입니다.\n\n" +
+                        "📌 접수번호: ${submission.receiptCode}\n\n" +
+                        "이 번호를 꼭 기억해 두세요!\n" +
+                        "설정 > 민원 처리상태 확인 에서 이 번호로\n관리자 확인 여부를 조회할 수 있습니다." + skippedMsg
+                    )
+                    .setPositiveButton("확인") { _, _ -> finish() }
+                    .setCancelable(false)
                     .show()
-                return@add
+            } else {
+                // 전송 실패 → 대기함에 자동 저장 (네트워크 연결 시 자동 재전송)
+                val saving = AlertDialog.Builder(this)
+                    .setMessage("네트워크가 불안정하여 기기에 저장 중...")
+                    .setCancelable(false)
+                    .create()
+                saving.show()
+                PendingStore.saveAsync(this, unit, mode, titleText, contentText, attachments, receiptCode) { ok, skipped2 ->
+                    saving.dismiss()
+                    if (ok) {
+                        clearDraft()
+                        PendingWorker.schedule(this)
+                        val skippedMsg = if (skipped2.isNotEmpty())
+                            "\n\n⚠ 용량 초과로 제외된 파일:\n" + skipped2.joinToString("\n") { "- $it" }
+                        else ""
+                        AlertDialog.Builder(this)
+                            .setTitle("전송 대기함에 저장됨")
+                            .setMessage(
+                                "지금은 서버에 연결할 수 없어 내용을 기기에 안전하게 저장했습니다.\n" +
+                                "네트워크가 연결되면 자동으로 전송됩니다.\n\n" +
+                                "📌 접수번호: $receiptCode\n" +
+                                "(전송이 완료된 뒤 이 번호로 조회할 수 있습니다)" + skippedMsg
+                            )
+                            .setPositiveButton("확인") { _, _ -> finish() }
+                            .setCancelable(false)
+                            .show()
+                    } else {
+                        AlertDialog.Builder(this)
+                            .setTitle("제출 실패")
+                            .setMessage(error ?: "알 수 없는 오류")
+                            .setPositiveButton("확인", null)
+                            .show()
+                    }
+                }
             }
-            val skippedMsg = if (skipped.isNotEmpty())
-                "\n\n⚠ 용량 초과로 첨부되지 못한 파일:\n" + skipped.joinToString("\n") { "- $it" }
-            else ""
-            AlertDialog.Builder(this)
-                .setTitle("제출 완료")
-                .setMessage(
-                    "정상적으로 접수되었습니다.\n$unit 관리자가 확인 후 처리할 예정입니다.\n\n" +
-                    "📌 접수번호: ${submission.receiptCode}\n\n" +
-                    "이 번호를 꼭 기억해 두세요!\n" +
-                    "설정 > 민원 처리상태 확인 에서 이 번호로\n관리자 확인 여부를 조회할 수 있습니다." + skippedMsg
-                )
-                .setPositiveButton("확인") { _, _ -> finish() }
-                .setCancelable(false)
-                .show()
         }
     }
 
-    /** 첨부 목록 UI 다시 그리기 */
+    // ===== 임시저장 (작성 중 튕겨도 내용 유지) =====
+
+    private fun draftPrefs() = getSharedPreferences("drafts", MODE_PRIVATE)
+
+    private fun restoreDraft() {
+        val t = draftPrefs().getString("t_$mode", "") ?: ""
+        val c = draftPrefs().getString("c_$mode", "") ?: ""
+        if (t.isNotEmpty() || c.isNotEmpty()) {
+            findViewById<EditText>(R.id.etTitle).setText(t)
+            findViewById<EditText>(R.id.etContent).setText(c)
+            Toast.makeText(this, "작성 중이던 내용을 불러왔습니다.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun saveDraft() {
+        val t = findViewById<EditText>(R.id.etTitle).text.toString()
+        val c = findViewById<EditText>(R.id.etContent).text.toString()
+        if (t.isBlank() && c.isBlank()) {
+            clearDraft()
+        } else {
+            draftPrefs().edit().putString("t_$mode", t).putString("c_$mode", c).apply()
+        }
+    }
+
+    private fun clearDraft() {
+        draftPrefs().edit().remove("t_$mode").remove("c_$mode").apply()
+    }
+
+    /** 첨부 목록 UI 다시 그리기 */    /** 첨부 목록 UI 다시 그리기 */
     private fun refreshAttachments() {
         llAttachments.removeAllViews()
         if (attachments.isEmpty()) {
@@ -150,8 +232,65 @@ class SubmitActivity : AppCompatActivity() {
         }
     }
 
+    // ===== 음성 녹음 =====
+
+    @Suppress("DEPRECATION")
+    private fun startRecording() {
+        try {
+            val time = java.text.SimpleDateFormat("yyyyMMdd_HHmmss", java.util.Locale.KOREA)
+                .format(java.util.Date())
+            val file = java.io.File(cacheDir, "음성녹음_$time.m4a")
+            val r = MediaRecorder()
+            r.setAudioSource(MediaRecorder.AudioSource.MIC)
+            r.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+            r.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+            r.setAudioEncodingBitRate(32000)
+            r.setAudioSamplingRate(22050)
+            r.setMaxDuration(3 * 60 * 1000)  // 최대 3분 (업로드 용량 제한 때문)
+            r.setOutputFile(file.absolutePath)
+            r.setOnInfoListener { _, what, _ ->
+                if (what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED) {
+                    Toast.makeText(this, "최대 녹음 시간(3분)에 도달했습니다.", Toast.LENGTH_SHORT).show()
+                    stopRecording()
+                }
+            }
+            r.prepare()
+            r.start()
+            recorder = r
+            recordFile = file
+            btnRecord.text = "⏹ 녹음 중지 (녹음 중...)"
+            Toast.makeText(this, "녹음을 시작했습니다.", Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            recorder = null
+            recordFile = null
+            Toast.makeText(this, "녹음을 시작할 수 없습니다.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun stopRecording() {
+        val r = recorder ?: return
+        recorder = null
+        btnRecord.text = "🎤 음성 녹음으로 증거 남기기 (최대 3분)"
+        try {
+            r.stop()
+            r.release()
+            recordFile?.let { file ->
+                if (file.exists() && file.length() > 0) {
+                    attachments.add(Uri.fromFile(file))
+                    refreshAttachments()
+                    Toast.makeText(this, "✓ 녹음이 첨부되었습니다.", Toast.LENGTH_SHORT).show()
+                }
+            }
+        } catch (e: Exception) {
+            try { r.release() } catch (e2: Exception) { }
+            Toast.makeText(this, "녹음이 너무 짧아 저장되지 않았습니다.", Toast.LENGTH_SHORT).show()
+        }
+        recordFile = null
+    }
+
     /** content URI 에서 파일명 얻기 */
     private fun fileName(uri: Uri): String {
+        if (uri.scheme == "file") return uri.lastPathSegment ?: "첨부파일"
         var name = "첨부파일"
         contentResolver.query(uri, null, null, null, null)?.use { c ->
             val idx = c.getColumnIndex(OpenableColumns.DISPLAY_NAME)
@@ -175,6 +314,8 @@ class SubmitActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
+        if (recorder != null) stopRecording()
+        saveDraft()   // 작성 중 화면을 벗어나거나 앱이 꺼져도 내용 유지
         BgmPlayer.setDucked(this, false)
     }
 }

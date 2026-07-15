@@ -20,6 +20,11 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        // 전송 대기 중인 민원이 있으면 네트워크 연결 시 자동 전송 예약
+        if (PendingStore.count(this) > 0) PendingWorker.schedule(this)
+        // 관리자 알림 대상 부대가 있으면 주기 확인 유지
+        if (AdminNotify.registeredUnits(this).isNotEmpty()) AdminNotify.schedule(this)
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
             override fun onActivityStarted(activity: Activity) {
                 if (startedActivities == 0) BgmPlayer.start(this@App)

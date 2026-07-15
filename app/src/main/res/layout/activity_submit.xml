@@ -99,6 +99,16 @@
             android:textColor="#1A237E"
             android:backgroundTint="#E8EAF6" />
 
+        <Button
+            android:id="@+id/btnRecord"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="🎤 음성 녹음으로 증거 남기기 (최대 3분)"
+            android:textSize="15sp"
+            android:textColor="#1A237E"
+            android:backgroundTint="#E8EAF6" />
+
         <!-- 첨부된 파일 목록 (동적 생성) -->
         <LinearLayout
             android:id="@+id/llAttachments"

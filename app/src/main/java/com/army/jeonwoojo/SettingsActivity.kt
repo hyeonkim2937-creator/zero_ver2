@@ -75,7 +75,12 @@ class SettingsActivity : AppCompatActivity() {
                     val message = when {
                         error != null -> error
                         found == null -> "해당 접수번호의 민원이 처리 완료되었거나, 번호가 올바르지 않습니다."
-                        else -> "[${found.typeLabel}] ${found.title}\n접수일시: ${found.dateLabel}\n\n상태: ${found.statusLabel}"
+                        else -> {
+                            val replyPart = if (found.reply.isNotEmpty())
+                                "\n\n💬 관리자 답변:\n${found.reply}"
+                            else ""
+                            "[${found.typeLabel}] ${found.title}\n접수일시: ${found.dateLabel}\n\n상태: ${found.statusLabel}$replyPart"
+                        }
                     }
                     androidx.appcompat.app.AlertDialog.Builder(this)
                         .setTitle("조회 결과")

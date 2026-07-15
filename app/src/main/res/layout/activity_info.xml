@@ -20,6 +20,7 @@
             android:textStyle="bold"
             android:paddingBottom="16dp" />
 
+        <!-- 정의·법령·유형·실제 사례 -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -27,6 +28,57 @@
             android:lineSpacingExtra="6dp"
             android:textColor="#212121"
             android:text="@string/info_body" />
+
+        <!-- 가상 사례 영상 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="\n\n■ 가상 사례 영상"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="#212121" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="아래 영상은 교육용으로 제작된 가상 사례 재연 영상입니다. 재생 중에는 배경음악이 자동으로 꺼집니다."
+            android:textSize="14sp"
+            android:lineSpacingExtra="4dp"
+            android:textColor="#555555"
+            android:paddingTop="6dp"
+            android:paddingBottom="10dp" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            android:background="#000000">
+
+            <VideoView
+                android:id="@+id/videoCase"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center" />
+
+            <Button
+                android:id="@+id/btnPlayVideo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="▶  영상 재생"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:backgroundTint="#B71C1C" />
+        </FrameLayout>
+
+        <!-- 꼭 기억하세요 + 안내 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:lineSpacingExtra="6dp"
+            android:textColor="#212121"
+            android:text="@string/info_body2" />
 
     </LinearLayout>
 </ScrollView>
